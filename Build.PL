@@ -12,7 +12,7 @@ my $builder = Module::Build->new(
     },
     requires            => {
         'Moose'         => 0.80,
-        'Test::DNS'     => 0.65,
+        'Net::DNS'      => 0.65,
         'Test::Deep'    => 0,
         'Test::Builder' => 0,
     },
