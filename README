@@ -46,6 +46,13 @@ SUBROUTINES/METHODS
 
         $dns->is_ptr( 'IP', [ 'first.ptr.domain', 'second.ptr.domain' ] );
 
+DEPENDENCIES
+    Moose
+
+    Net::DNS
+
+    Test::Deep
+
 AUTHOR
     Sawyer X, "<xsawyerx at cpan.org>"
 
