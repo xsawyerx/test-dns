@@ -7,11 +7,23 @@ my $builder = Module::Build->new(
     license             => 'perl',
     dist_author         => q{Sawyer X <xsawyerx@cpan.org>},
     dist_version_from   => 'lib/Test/DNS.pm',
-    build_requires => {
+    build_requires      => {
         'Test::More' => 0,
     },
+    requires            => {
+        'Moose'         => 0.80,
+        'Test::DNS'     => 0.65,
+        'Test::Deep'    => 0,
+        'Test::Builder' => 0,
+    },
+    meta_merge          => {
+        resources => {
+            repository => 'http://github.com/xsawyerx/test-dns',
+        },
+        keywords   => [ 'DNS' ],
+    },
     add_to_cleanup      => [ 'Test-DNS-*' ],
-    create_makefile_pl => 'traditional',
+    create_makefile_pl  => 'traditional',
 );
 
 $builder->create_build_script();
