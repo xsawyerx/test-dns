@@ -14,6 +14,7 @@ my $CLASS = __PACKAGE__;
 
 sub BUILD {
     $Test::Builder::Level += 1;
+    return;
 }
 
 sub _build_object {
@@ -28,18 +29,21 @@ sub _build_object {
 sub is_a {
     my ( $self, $domain, $ips, $test_name ) = @_;
     $self->is_record( 'A', $domain, $ips, $test_name );
+    return;
 }
 
 # PTR -> A
 sub is_ptr {
     my ( $self, $ip, $domains, $test_name ) = @_;
     $self->is_record( 'PTR', $ip, $domains );
+    return;
 }
 
 # Domain -> NS
 sub is_ns {
     my ( $self, $domain, $ns, $test_name ) = @_;
     $self->is_record( 'NS', $domain, $ns );
+    return;
 }
 
 sub get_method {
@@ -84,6 +88,8 @@ sub is_record {
     }
 
     cmp_bag( \@results, $expected, $test_name );
+
+    return;
 }
 
 sub _warn {
@@ -91,6 +97,8 @@ sub _warn {
     chomp $msg;
     my $tb = $CLASS->builder;
     $tb->diag("!! Warning: [$type] $msg !!");
+
+    return;
 }
 
 1;
@@ -150,6 +158,14 @@ Check the PTR records of an IP.
     $dns->is_ptr( 'IP' => 'ptr.records.domain' );
 
     $dns->is_ptr( 'IP', [ 'first.ptr.domain', 'second.ptr.domain' ] );
+
+=head1 DEPENDENCIES
+
+L<Moose>
+
+L<Net::DNS>
+
+L<Test::Deep>
 
 =head1 AUTHOR
 
