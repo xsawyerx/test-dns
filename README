@@ -1,0 +1,95 @@
+NAME
+    Test::DNS - Test DNS queries and zone configuration
+
+VERSION
+    Version 0.01
+
+SYNOPSIS
+    This module helps you write tests for DNS queries. You could test your
+    domain configuration in the world or on a specific DNS server, for
+    example.
+
+        use Test::DNS;
+        use Test::More tests => 4;
+
+        my $dns = Test::DNS->new();
+
+        $dns->is_ptr( '1.2.3.4' => 'single.ptr.record.com' );
+        $dns->is_ptr( '1.2.3.4' => [ 'one.ptr.record.com', 'two.ptr.record.com' ] );
+        $dns->is_ns( 'google.com' => [ map { "ns$_.google.com" } 1 .. 4 ] );
+        $dns->is_a( 'ns1.google.com' => '216.239.32.10' );
+
+        ...
+
+EXPORT
+    This module is completely Object Oriented, nothing is exported.
+
+SUBROUTINES/METHODS
+  is_a
+    Check the A record resolving of domain or subdomain.
+
+        $dns->is_a( 'domain' => 'IP' );
+
+        $dns->is_a( 'domain', [ 'IP1', 'IP2' ] );
+
+  is_ns
+    Check the NS record resolving of a domain or subdomain.
+
+        $dns->is_ns( 'domain' => 'IP' );
+
+        $dns->is_ns( 'domain', [ 'IP1', 'IP2' ] );
+
+  is_ptr
+    Check the PTR records of an IP.
+
+        $dns->is_ptr( 'IP' => 'ptr.records.domain' );
+
+        $dns->is_ptr( 'IP', [ 'first.ptr.domain', 'second.ptr.domain' ] );
+
+AUTHOR
+    Sawyer X, "<xsawyerx at cpan.org>"
+
+BUGS
+    Please report any bugs or feature requests to "bug-test-dns at
+    rt.cpan.org", or through the web interface at
+    <http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Test-DNS>. I will be
+    notified, and then you'll automatically be notified of progress on your
+    bug as I make changes.
+
+SUPPORT
+    You can find documentation for this module with the perldoc command.
+
+        perldoc Test::DNS
+
+    You can also look for information at:
+
+    *   Github
+
+        <http://github.com/xsawyerx/test-dns>
+
+    *   RT: CPAN's request tracker
+
+        <http://rt.cpan.org/NoAuth/Bugs.html?Dist=Test-DNS>
+
+    *   AnnoCPAN: Annotated CPAN documentation
+
+        <http://annocpan.org/dist/Test-DNS>
+
+    *   CPAN Ratings
+
+        <http://cpanratings.perl.org/d/Test-DNS>
+
+    *   Search CPAN
+
+        <http://search.cpan.org/dist/Test-DNS/>
+
+ACKNOWLEDGEMENTS
+LICENSE AND COPYRIGHT
+    Copyright 2010 Sawyer X.
+
+    This program is free software; you can redistribute it and/or modify it
+    under the terms of either: the GNU General Public License as published
+    by the Free Software Foundation; or the Artistic License.
+
+    See http://dev.perl.org/licenses/ for more information.
+
