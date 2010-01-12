@@ -3,11 +3,13 @@ package Test::DNS;
 use Moose;
 use Net::DNS;
 use Test::Deep 'cmp_bag';
+use Set::Object 'set';
 use base 'Test::Builder::Module';
 
 has 'nameservers' => ( is => 'rw', isa => 'ArrayRef', default    => sub { [] } );
 has 'object'      => ( is => 'ro', isa => 'Net::DNS::Resolver', lazy_build => 1 );
 
+has 'follow_cname' => ( is => 'rw', isa => 'Bool', default => 0 );
 has 'warnings'     => ( is => 'rw', isa => 'Bool', default => 1 );
 
 our $VERSION = '0.01';
@@ -76,6 +78,29 @@ sub get_method {
     return $method ? $method : 0;
 }
 
+sub _recurse_a_records {
+    my ( $self, $set, $rr ) = @_;
+    my $res = $self->object;
+
+    if ( $rr->type eq 'CNAME' ) {
+        my $cname_method = $self->get_method('CNAME');
+        my $cname        = $rr->$cname_method;
+        my $query        = $res->query( $cname, 'A' );
+
+        if ($query) {
+            my @records = $query->answer;
+            foreach my $record (@records) {
+                $self->_recurse_a_records( $set, $record );
+            }
+        }
+    } elsif ( $rr->type eq 'A' ) {
+        my $a_method = $self->get_method('A');
+        $set->insert( $rr->$a_method );
+    }
+
+    return;
+}
+
 sub is_record {
     my ( $self, $type, $input, $expected, $test_name ) = @_;
 
@@ -84,7 +109,7 @@ sub is_record {
     my $method     = $self->get_method($type);
     my $query_res  = $res->query( $input, $type );
     my $COMMASPACE = q{, };
-    my @results    = ();
+    my $results    = set();
 
     ( ref $expected eq 'ARRAY' ) || ( $expected = [ $expected ] );
     $test_name ||= "[$type] $input -> " . join $COMMASPACE, @{$expected};
@@ -99,13 +124,17 @@ sub is_record {
 
     foreach my $rr (@records) {
         if ( $rr->type ne $type ) {
-            $self->_warn( $type, 'got incorrect RR type: ' . $rr->type );
+            if ( $rr->type eq 'CNAME' && $self->follow_cname ) {
+                $self->_recurse_a_records( $results, $rr );
+            } else {
+                $self->_warn( $type, 'got incorrect RR type: ' . $rr->type );
+            }
+        } else {
+            $results->insert( $rr->$method );
         }
-
-        push @results, $rr->$method;
     }
 
-    cmp_bag( \@results, $expected, $test_name );
+    cmp_bag( [ $results->members ], $expected, $test_name );
 
     return;
 }

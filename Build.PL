@@ -15,6 +15,7 @@ my $builder = Module::Build->new(
         'Net::DNS'      => 0.65,
         'Test::Deep'    => 0,
         'Test::Builder' => 0,
+        'Set::Object'   => 0,
     },
     meta_merge          => {
         resources => {
