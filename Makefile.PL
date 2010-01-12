@@ -7,6 +7,7 @@ WriteMakefile
           'PREREQ_PM' => {
                            'Moose' => '0.8',
                            'Net::DNS' => '0.65',
+                           'Set::Object' => '0',
                            'Test::Builder' => '0',
                            'Test::Deep' => '0',
                            'Test::More' => '0'
