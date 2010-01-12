@@ -53,13 +53,21 @@ sub is_mx {
     return;
 }
 
+# Domain -> CNAME
+sub is_cname {
+    my ( $self, $domain, $cname, $test_name ) = @_;
+    $self->is_record( 'CNAME', $domain, $cname );
+    return;
+}
+
 sub get_method {
     my ( $self, $type ) = @_;
     my %method_by_type = (
-        'A'   => 'address',
-        'NS'  => 'nsdname',
-        'MX'  => 'exchange',
-        'PTR' => 'ptrdname',
+        'A'     => 'address',
+        'NS'    => 'nsdname',
+        'MX'    => 'exchange',
+        'PTR'   => 'ptrdname',
+        'CNAME' => 'cname',
     );
 
     my $method = $method_by_type{$type};
