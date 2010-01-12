@@ -6,6 +6,8 @@ Revision history for Test-DNS
         - adding warnings attribute
         - adding follow_cname attribute
         - started using Set::Object, added dependency
+        - adding more docs
+        - making get_method private (_get_method)
 
 0.01    11.01.10
         First version!
