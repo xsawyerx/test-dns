@@ -64,7 +64,7 @@ sub is_cname {
     return;
 }
 
-sub get_method {
+sub _get_method {
     my ( $self, $type ) = @_;
     my %method_by_type = (
         'A'     => 'address',
@@ -83,7 +83,7 @@ sub _recurse_a_records {
     my $res = $self->object;
 
     if ( $rr->type eq 'CNAME' ) {
-        my $cname_method = $self->get_method('CNAME');
+        my $cname_method = $self->_get_method('CNAME');
         my $cname        = $rr->$cname_method;
         my $query        = $res->query( $cname, 'A' );
 
@@ -94,7 +94,7 @@ sub _recurse_a_records {
             }
         }
     } elsif ( $rr->type eq 'A' ) {
-        my $a_method = $self->get_method('A');
+        my $a_method = $self->_get_method('A');
         $set->insert( $rr->$a_method );
     }
 
@@ -106,7 +106,7 @@ sub is_record {
 
     my $res        = $self->object;
     my $tb         = $CLASS->builder;
-    my $method     = $self->get_method($type);
+    my $method     = $self->_get_method($type);
     my $query_res  = $res->query( $input, $type );
     my $COMMASPACE = q{, };
     my $results    = set();
@@ -183,6 +183,34 @@ This module helps you write tests for DNS queries. You could test your domain co
 
 This module is completely Object Oriented, nothing is exported.
 
+=head1 ATTRIBUTES
+
+=head2 nameservers
+
+Same as in L<Net::DNS>. Sets the nameservers, accepts an arrayref.
+
+    $dns->nameservers( [ 'IP1', 'DOMAIN' ] );
+
+=head2 warnings
+
+Do you want to output warnings from the module, such as when a record doesn't a query result or incorrect types?
+
+This helps avoid common misconfigurations. You should probably keep it, but if it bugs you, you can stop it using:
+
+    $dns->warnings(0);
+
+Default: 1 (on).
+
+=head2 follow_cname
+
+When fetching an A record of a domain, it may resolve to a CNAME instead of an A record. That would result in a false-negative of sorts, in which you say "well, yes, I meant the A record the CNAME record points to" but L<Test::DNS> doesn't know that.
+
+If you want want Test::DNS to follow every CNAME till it reaches the actual A record and compare B<that> A record, use this option.
+
+    $dns->follow_cname(1);
+
+Default: 0 (off).
+
 =head1 SUBROUTINES/METHODS
 
 =head2 is_a
@@ -209,6 +237,28 @@ Check the PTR records of an IP.
 
     $dns->is_ptr( 'IP', [ 'first.ptr.domain', 'second.ptr.domain' ] );
 
+=head2 is_mx
+
+Check the MX records of a domain.
+
+    $dns->is_mx( 'domain' => 'mailer.domain' );
+
+    $dns->is_ptr( 'domain', [ 'mailer1.domain', 'mailer2.domain' ] );
+
+=head2 is_cname
+
+Check the CNAME records of a domain.
+
+    $dns->is_cname( 'domain' => 'sub.domain' );
+
+    $dns->is_cname( 'domain', [ 'sub1.domain', 'sub2.domain' ] );
+
+=head2 is_record
+
+The general function all the other is_* functions run.
+
+    $dns->is_record( 'CNAME', 'domain', 'sub.domain', 'test_name' );
+
 =head1 DEPENDENCIES
 
 L<Moose>
@@ -216,6 +266,8 @@ L<Moose>
 L<Net::DNS>
 
 L<Test::Deep>
+
+L<Set::Object>
 
 =head1 AUTHOR
 
