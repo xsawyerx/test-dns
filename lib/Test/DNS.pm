@@ -46,11 +46,19 @@ sub is_ns {
     return;
 }
 
+# Domain -> MX
+sub is_mx {
+    my ( $self, $domain, $mx, $test_name ) = @_;
+    $self->is_record( 'MX', $domain, $mx );
+    return;
+}
+
 sub get_method {
     my ( $self, $type ) = @_;
     my %method_by_type = (
         'A'   => 'address',
         'NS'  => 'nsdname',
+        'MX'  => 'exchange',
         'PTR' => 'ptrdname',
     );
 
