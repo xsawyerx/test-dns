@@ -8,6 +8,8 @@ use base 'Test::Builder::Module';
 has 'nameservers' => ( is => 'rw', isa => 'ArrayRef', default    => sub { [] } );
 has 'object'      => ( is => 'ro', isa => 'Net::DNS::Resolver', lazy_build => 1 );
 
+has 'warnings'     => ( is => 'rw', isa => 'Bool', default => 1 );
+
 our $VERSION = '0.01';
 
 my $CLASS = __PACKAGE__;
@@ -110,6 +112,9 @@ sub is_record {
 
 sub _warn {
     my ( $self, $type, $msg ) = @_;
+
+    $self->warnings || return;
+
     chomp $msg;
     my $tb = $CLASS->builder;
     $tb->diag("!! Warning: [$type] $msg !!");
