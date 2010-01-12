@@ -22,3 +22,7 @@ $dns->is_a( 'ns1.google.com' => '216.239.32.10' );
 $dns->is_mx( 'google.com' => [
     map { "google.com.s9$_.psmtp.com" } qw/ b1 b2 a1 a2 /,
 ] );
+
+# the CNAME record of a domain
+$dns->is_cname( 'www.google.com' => 'www.l.google.com' );
+
