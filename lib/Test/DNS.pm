@@ -12,7 +12,7 @@ has 'object'      => ( is => 'ro', isa => 'Net::DNS::Resolver', lazy_build => 1 
 has 'follow_cname' => ( is => 'rw', isa => 'Bool', default => 0 );
 has 'warnings'     => ( is => 'rw', isa => 'Bool', default => 1 );
 
-our $VERSION = '0.02';
+our $VERSION = '0.03';
 
 my $CLASS = __PACKAGE__;
 
@@ -161,7 +161,7 @@ Test::DNS - Test DNS queries and zone configuration
 
 =head1 VERSION
 
-Version 0.02
+Version 0.03
 
 =head1 SYNOPSIS
 
