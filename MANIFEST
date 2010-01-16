@@ -7,7 +7,6 @@ t/00-load.t
 t/manifest.t
 t/is_records.t
 t/follow_cname.t
-t/todos.t
 t/pod-coverage.t
 t/pod.t
 Makefile.PL
