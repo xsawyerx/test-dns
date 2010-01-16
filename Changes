@@ -1,5 +1,9 @@
 Revision history for Test-DNS
 
+0.04    16.01.10
+        - adding hash option, documentation and testing for it as well
+        - adding buffing up POD
+
 0.03    14.01.10
         - using perl.org instead of google.com for cname tests
 

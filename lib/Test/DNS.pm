@@ -29,38 +29,69 @@ sub _build_object {
     );
 }
 
+sub _handle_hash_format {
+    my ( $self, $type, $hashref, $test_name, $extra ) = @_;
+    my $EMPTY = q{};
+    $test_name ||= $EMPTY;
+
+    # special hash construct
+    if ( @_ >= 3 || @_ <= 4 ) {
+        # $self, $type, $hashref             OR
+        # $self, $type, $hashref, $test_name
+        if ( ref $hashref eq 'HASH' &&
+           ! ref $test_name         &&
+             ref \$test_name eq 'SCALAR' ) {
+            # $hashref is hashref
+            # $test_name isn't a ref
+            # \$test_name is a SCALAR ref
+            while ( my ( $domain, $ips ) = each %{$hashref} ) {
+                $self->is_record( $type, $domain, $ips, $test_name );
+            }
+
+            return 1;
+        }
+    }
+
+    return;
+}
+
 # A -> IP
 sub is_a {
     my ( $self, $domain, $ips, $test_name ) = @_;
-    $self->is_record( 'A', $domain, $ips, $test_name );
+    $self->_handle_hash_format( 'A', $domain, $ips, $test_name ) ||
+        $self->is_record( 'A', $domain, $ips, $test_name );
     return;
 }
 
 # PTR -> A
 sub is_ptr {
     my ( $self, $ip, $domains, $test_name ) = @_;
-    $self->is_record( 'PTR', $ip, $domains );
+    $self->_handle_hash_format( 'PTR', $ip, $domains, $test_name ) ||
+        $self->is_record( 'PTR', $ip, $domains );
     return;
 }
 
 # Domain -> NS
 sub is_ns {
     my ( $self, $domain, $ns, $test_name ) = @_;
-    $self->is_record( 'NS', $domain, $ns );
+    $self->_handle_hash_format( 'NS', $domain, $ns, $test_name ) ||
+        $self->is_record( 'NS', $domain, $ns );
     return;
 }
 
 # Domain -> MX
 sub is_mx {
     my ( $self, $domain, $mx, $test_name ) = @_;
-    $self->is_record( 'MX', $domain, $mx );
+    $self->_handle_hash_format( 'MX', $domain, $mx, $test_name ) ||
+        $self->is_record( 'MX', $domain, $mx );
     return;
 }
 
 # Domain -> CNAME
 sub is_cname {
     my ( $self, $domain, $cname, $test_name ) = @_;
-    $self->is_record( 'CNAME', $domain, $cname );
+    $self->_handle_hash_format( 'CNAME', $domain, $cname, $test_name ) ||
+        $self->is_record( 'CNAME', $domain, $cname );
     return;
 }
 
@@ -179,21 +210,59 @@ This module helps you write tests for DNS queries. You could test your domain co
 
     ...
 
+=head1 DESCRIPTION
+
+Test::DNS allows you to run tests which translate as DNS queries. It's simple to use and abstracts all the difficult query checks from you. It has a built-in tests naming scheme so you don't really have to name your tests (as shown in all the examples) even though it supports the option.
+
+    use Test::DNS;
+    use Test::More tests => 1;
+
+    my $dns = Test::DNS->new( nameservers => [ 'my.dns.server' ] );
+    $dns->is_ptr( '1.1.1.1' => 'my_new.mail.server' );
+
+That was a complete test script that will fetch the PTR (if there is one), warns if it's missing one (an option you can remove via the I<warnings> attribute) and checks against the domain you gave. You could also give for each test an arrayref of expected values. That's useful if you want to check multiple values. For example:
+
+    use Test::DNS;
+    use Test::More tests => 1;
+
+    my $dns = Test::DNS->new();
+    $dns->is_ns( 'my.domain' => [ 'ns1.my.domain', 'ns2.my.domain' ] );
+    # or
+    $dns->is_ns( 'my.domain' => [ map { "ns$_.my.domain" } 1 .. 5 ] );
+
+You can set the I<follow_cname> option if your PTR returns a CNAME instead of an A record and you want to test the A record instead of the CNAME. This happened to me at least twice and fumbled my tests. I was expecting an A record, but got a CNAME to an A record. This is obviously legal DNS practices, so using the I<follow_cname> attribute listed below, the test went with flying colors. This is a recursive CNAME to A record function so you could handle multiple CNAME chaining if one has such an odd case.
+
+New in version 0.04 is the option to give a hashref as the testing values (not including a test name as well), which makes things much easier to test if you want to run multiple tests and don't want to write multiple lines. This helps connect Test::DNS with freshly-parsed data (YAML/JSON/XML/etc.).
+
+    use Test::DNS;
+    use YAML 'LoadFile';
+    use Test::More tests => 2;
+
+    my $dns = Test::DNS->new();
+    # running two DNS tests in one command!
+    $dns->is_ns( {
+        'first.domain'  => [ map { "ns$_.first.domain"  } 1 .. 4 ],
+        'second.domain' => [ map { "ns$_.second.domain" } 5, 6   ],
+    } );
+
+    my $tests = LoadFile('tests.yaml');
+    $dns->is_a( $tests, delete $tests->{'name'} ); # $tests is a hashref
+
 =head1 EXPORT
 
 This module is completely Object Oriented, nothing is exported.
 
 =head1 ATTRIBUTES
 
-=head2 nameservers
+=head2 nameservers($arrayref)
 
 Same as in L<Net::DNS>. Sets the nameservers, accepts an arrayref.
 
     $dns->nameservers( [ 'IP1', 'DOMAIN' ] );
 
-=head2 warnings
+=head2 warnings($boolean)
 
-Do you want to output warnings from the module, such as when a record doesn't a query result or incorrect types?
+Do you want to output warnings from the module (in valid TAP), such as when a record doesn't a query result or incorrect types?
 
 This helps avoid common misconfigurations. You should probably keep it, but if it bugs you, you can stop it using:
 
@@ -201,11 +270,11 @@ This helps avoid common misconfigurations. You should probably keep it, but if i
 
 Default: 1 (on).
 
-=head2 follow_cname
+=head2 follow_cname($boolean)
 
 When fetching an A record of a domain, it may resolve to a CNAME instead of an A record. That would result in a false-negative of sorts, in which you say "well, yes, I meant the A record the CNAME record points to" but L<Test::DNS> doesn't know that.
 
-If you want want Test::DNS to follow every CNAME till it reaches the actual A record and compare B<that> A record, use this option.
+If you want want Test::DNS to follow every CNAME recursively till it reaches the actual A record and compare B<that> A record, use this option.
 
     $dns->follow_cname(1);
 
@@ -213,51 +282,92 @@ Default: 0 (off).
 
 =head1 SUBROUTINES/METHODS
 
-=head2 is_a
+=head2 is_a( $domain, $ips, [$test_name] )
 
 Check the A record resolving of domain or subdomain.
+
+$ip can be an arrayref.
+
+$test_name is not mandatory.
 
     $dns->is_a( 'domain' => 'IP' );
 
     $dns->is_a( 'domain', [ 'IP1', 'IP2' ] );
 
-=head2 is_ns
+=head2 is_ns( $domain, $ips, [$test_name] )
 
 Check the NS record resolving of a domain or subdomain.
+
+$ip can be an arrayref.
+
+$test_name is not mandatory.
 
     $dns->is_ns( 'domain' => 'IP' );
 
     $dns->is_ns( 'domain', [ 'IP1', 'IP2' ] );
 
-=head2 is_ptr
+=head2 is_ptr( $ip, $domains, [$test_name] )
 
 Check the PTR records of an IP.
+
+$domains can be an arrayref.
+
+$test_name is not mandatory.
 
     $dns->is_ptr( 'IP' => 'ptr.records.domain' );
 
     $dns->is_ptr( 'IP', [ 'first.ptr.domain', 'second.ptr.domain' ] );
 
-=head2 is_mx
+=head2 is_mx( $domain, $domains, [$test_name] )
 
 Check the MX records of a domain.
+
+$domains can be an arrayref.
+
+$test_name is not mandatory.
 
     $dns->is_mx( 'domain' => 'mailer.domain' );
 
     $dns->is_ptr( 'domain', [ 'mailer1.domain', 'mailer2.domain' ] );
 
-=head2 is_cname
+=head2 is_cname( $domain, $domains, [$test_name] )
 
 Check the CNAME records of a domain.
+
+$domains can be an arrayref.
+
+$test_name is not mandatory.
 
     $dns->is_cname( 'domain' => 'sub.domain' );
 
     $dns->is_cname( 'domain', [ 'sub1.domain', 'sub2.domain' ] );
 
-=head2 is_record
+=head2 is_record( $type, $input, $expected, [$test_name] )
 
 The general function all the other is_* functions run.
 
+$type is the record type (CNAME, A, NS, PTR, MX, etc.).
+
+$input is the domain or IP you're testing.
+
+$expected can be an arrayref.
+
+$test_name is not mandatory.
+
     $dns->is_record( 'CNAME', 'domain', 'sub.domain', 'test_name' );
+
+=head1 HASH FORMAT
+
+The hash format option (since version 0.04) allows you to run the tests using a single hashref with an optional parameter for the test_name. The count is no longer 1 (as it is with single tests), but each key/value pair represents a test case.
+
+    # these are 2 tests
+    $dns->is_ns( {
+        'first.domain'  => [ map { "ns$_.first.domain"  } 1 .. 4 ],
+        'second.domain' => [ map { "ns$_.second.domain" } 5, 6   ],
+    } );
+
+    # number of tests: keys %{$tests}, test name: $tests->{'name'}
+    $dns->is_a( $tests, delete $tests->{'name'} ); # $tests is a hashref
 
 =head1 DEPENDENCIES
 
