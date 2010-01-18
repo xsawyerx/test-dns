@@ -6,8 +6,17 @@ use Test::Deep 'cmp_bag';
 use Set::Object 'set';
 use base 'Test::Builder::Module';
 
-has 'nameservers' => ( is => 'rw', isa => 'ArrayRef', default    => sub { [] } );
-has 'object'      => ( is => 'ro', isa => 'Net::DNS::Resolver', lazy_build => 1 );
+has 'nameservers' => (
+    is      => 'rw',
+    isa     => 'ArrayRef',
+    default => sub { [] },
+    trigger => sub {
+        my ( $self, $nameservers ) = @_;
+        $self->object->nameservers($nameservers);
+    },
+);
+
+has 'object' => ( is => 'ro', isa => 'Net::DNS::Resolver', lazy_build => 1 );
 
 has 'follow_cname' => ( is => 'rw', isa => 'Bool', default => 0 );
 has 'warnings'     => ( is => 'rw', isa => 'Bool', default => 1 );
