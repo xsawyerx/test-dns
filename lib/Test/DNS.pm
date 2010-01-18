@@ -12,7 +12,7 @@ has 'nameservers' => (
     default => sub { [] },
     trigger => sub {
         my ( $self, $nameservers ) = @_;
-        $self->object->nameservers($nameservers);
+        $self->object->nameservers( @{$nameservers} );
     },
 );
 
