@@ -1,6 +1,7 @@
 Build.PL
 Changes
 MANIFEST
+MANIFEST.SKIP
 README
 lib/Test/DNS.pm
 t/00-load.t
