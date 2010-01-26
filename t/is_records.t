@@ -13,7 +13,7 @@ $dns->is_ptr( '74.125.148.13' => 's9b1.psmtp.com' );
 $dns->is_ptr( '74.125.148.13' => [ 's9b1.psmtp.com' ] );
 
 # the NS record of a domain
-$dns->is_ns( 'google.com' => [ map { "ns$_.google.com" } 1 .. 4 ] );
+$dns->is_ns( 'perl.com' => [ map { "nsauth$_.oreilly.com" } 'a', 'b' ] );
 
 # the A record of NS records of a domain
 $dns->is_a( 'ns1.google.com' => '216.239.32.10' );
