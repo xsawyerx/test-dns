@@ -2,7 +2,7 @@ NAME
     Test::DNS - Test DNS queries and zone configuration
 
 VERSION
-    Version 0.05
+    Version 0.06
 
 SYNOPSIS
     This module helps you write tests for DNS queries. You could test your

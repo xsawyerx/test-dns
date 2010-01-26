@@ -1,5 +1,8 @@
 Revision history for Test-DNS
 
+0.06    26.01.10
+        - cleanups for tests: changing NS test to perl.com, removing old ones
+
 0.05    18.01.10
         - added trigger to nameservers attribute to set the nameserver of the
           resolver object while working
