@@ -35,8 +35,8 @@ $dns->is_a( {
 
 # NS in hash
 $dns->is_ns( {
-    'google.com'    => [ map { "ns$_.google.com" } 1 .. 4 ],
-    'microsoft.com' => [ map { "ns$_.msft.net"   } 1 .. 5 ],
+    'perl.com'      => [ map { "nsauth$_.oreilly.com" } 'a', 'b' ],
+    'microsoft.com' => [ map { "ns$_.msft.net"        } 1 .. 5   ],
 } );
 
 # PTR in hash
