@@ -205,7 +205,8 @@ Version 0.07
 
 =head1 SYNOPSIS
 
-This module helps you write tests for DNS queries. You could test your domain configuration in the world or on a specific DNS server, for example.
+This module helps you write tests for DNS queries. You could test your domain
+configuration in the world or on a specific DNS server, for example.
 
     use Test::DNS;
     use Test::More tests => 4;
@@ -221,7 +222,10 @@ This module helps you write tests for DNS queries. You could test your domain co
 
 =head1 DESCRIPTION
 
-Test::DNS allows you to run tests which translate as DNS queries. It's simple to use and abstracts all the difficult query checks from you. It has a built-in tests naming scheme so you don't really have to name your tests (as shown in all the examples) even though it supports the option.
+Test::DNS allows you to run tests which translate as DNS queries. It's simple to
+use and abstracts all the difficult query checks from you. It has a built-in
+tests naming scheme so you don't really have to name your tests (as shown in all
+the examples) even though it supports the option.
 
     use Test::DNS;
     use Test::More tests => 1;
@@ -229,7 +233,11 @@ Test::DNS allows you to run tests which translate as DNS queries. It's simple to
     my $dns = Test::DNS->new( nameservers => [ 'my.dns.server' ] );
     $dns->is_ptr( '1.1.1.1' => 'my_new.mail.server' );
 
-That was a complete test script that will fetch the PTR (if there is one), warns if it's missing one (an option you can remove via the I<warnings> attribute) and checks against the domain you gave. You could also give for each test an arrayref of expected values. That's useful if you want to check multiple values. For example:
+That was a complete test script that will fetch the PTR (if there is one), warns
+if it's missing one (an option you can remove via the I<warnings> attribute) and
+checks against the domain you gave. You could also give for each test an
+arrayref of expected values. That's useful if you want to check multiple values.
+For example:
 
     use Test::DNS;
     use Test::More tests => 1;
@@ -239,9 +247,18 @@ That was a complete test script that will fetch the PTR (if there is one), warns
     # or
     $dns->is_ns( 'my.domain' => [ map { "ns$_.my.domain" } 1 .. 5 ] );
 
-You can set the I<follow_cname> option if your PTR returns a CNAME instead of an A record and you want to test the A record instead of the CNAME. This happened to me at least twice and fumbled my tests. I was expecting an A record, but got a CNAME to an A record. This is obviously legal DNS practices, so using the I<follow_cname> attribute listed below, the test went with flying colors. This is a recursive CNAME to A record function so you could handle multiple CNAME chaining if one has such an odd case.
+You can set the I<follow_cname> option if your PTR returns a CNAME instead of an
+A record and you want to test the A record instead of the CNAME. This happened
+to me at least twice and fumbled my tests. I was expecting an A record, but got
+a CNAME to an A record. This is obviously legal DNS practices, so using the
+I<follow_cname> attribute listed below, the test went with flying colors. This
+is a recursive CNAME to A record function so you could handle multiple CNAME
+chaining if one has such an odd case.
 
-New in version 0.04 is the option to give a hashref as the testing values (not including a test name as well), which makes things much easier to test if you want to run multiple tests and don't want to write multiple lines. This helps connect Test::DNS with freshly-parsed data (YAML/JSON/XML/etc.).
+New in version 0.04 is the option to give a hashref as the testing values (not
+including a test name as well), which makes things much easier to test if you
+want to run multiple tests and don't want to write multiple lines. This helps
+connect Test::DNS with freshly-parsed data (YAML/JSON/XML/etc.).
 
     use Test::DNS;
     use YAML 'LoadFile';
@@ -271,9 +288,11 @@ Same as in L<Net::DNS>. Sets the nameservers, accepts an arrayref.
 
 =head2 warnings($boolean)
 
-Do you want to output warnings from the module (in valid TAP), such as when a record doesn't a query result or incorrect types?
+Do you want to output warnings from the module (in valid TAP), such as when a
+record doesn't a query result or incorrect types?
 
-This helps avoid common misconfigurations. You should probably keep it, but if it bugs you, you can stop it using:
+This helps avoid common misconfigurations. You should probably keep it, but if
+it bugs you, you can stop it using:
 
     $dns->warnings(0);
 
@@ -281,9 +300,13 @@ Default: 1 (on).
 
 =head2 follow_cname($boolean)
 
-When fetching an A record of a domain, it may resolve to a CNAME instead of an A record. That would result in a false-negative of sorts, in which you say "well, yes, I meant the A record the CNAME record points to" but L<Test::DNS> doesn't know that.
+When fetching an A record of a domain, it may resolve to a CNAME instead of an A
+record. That would result in a false-negative of sorts, in which you say "well,
+yes, I meant the A record the CNAME record points to" but L<Test::DNS> doesn't
+know that.
 
-If you want want Test::DNS to follow every CNAME recursively till it reaches the actual A record and compare B<that> A record, use this option.
+If you want want Test::DNS to follow every CNAME recursively till it reaches the
+actual A record and compare B<that> A record, use this option.
 
     $dns->follow_cname(1);
 
@@ -365,9 +388,16 @@ $test_name is not mandatory.
 
     $dns->is_record( 'CNAME', 'domain', 'sub.domain', 'test_name' );
 
+=head2 BUILD
+
+L<Moose> builder method. Do not call it or override it. :)
+
 =head1 HASH FORMAT
 
-The hash format option (since version 0.04) allows you to run the tests using a single hashref with an optional parameter for the test_name. The count is no longer 1 (as it is with single tests), but each key/value pair represents a test case.
+The hash format option (since version 0.04) allows you to run the tests using a
+single hashref with an optional parameter for the test_name. The count is no
+longer 1 (as it is with single tests), but each key/value pair represents a test
+case.
 
     # these are 2 tests
     $dns->is_ns( {
@@ -394,9 +424,11 @@ Sawyer X, C<< <xsawyerx at cpan.org> >>
 
 =head1 BUGS
 
-Please report any bugs or feature requests to C<bug-test-dns at rt.cpan.org>, or through
-the web interface at L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Test-DNS>.  I will be notified, and then you'll
-automatically be notified of progress on your bug as I make changes.
+Please report any bugs or feature requests to C<bug-test-dns at rt.cpan.org>, or
+through the web interface at
+L<http://rt.cpan.org/NoAuth/ReportBug.html?Queue=Test-DNS>. I will be notified,
+and then you'll automatically be notified of progress on your bug as I make
+changes.
 
 =head1 SUPPORT
 
