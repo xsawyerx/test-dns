@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 18;
+use Test::More tests => 19;
 use Test::DNS;
 
 my $dns = Test::DNS->new();
@@ -65,3 +65,7 @@ $dns->is_cname( {
     'www.perl.org'   => 'x3.develooper.com',
 }, 'Checking CNAMES for google.com and perl.org' );
 
+# TXT in hash
+$dns->is_txt( {
+    'godaddy.com' => 'v=spf1 include:spf.secureserver.net -all',
+} );

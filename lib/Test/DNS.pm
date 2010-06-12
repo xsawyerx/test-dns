@@ -21,7 +21,7 @@ has 'object' => ( is => 'ro', isa => 'Net::DNS::Resolver', lazy_build => 1 );
 has 'follow_cname' => ( is => 'rw', isa => 'Bool', default => 0 );
 has 'warnings'     => ( is => 'rw', isa => 'Bool', default => 1 );
 
-our $VERSION = '0.07';
+our $VERSION = '0.08';
 
 my $CLASS = __PACKAGE__;
 
@@ -104,6 +104,14 @@ sub is_cname {
     return;
 }
 
+# Domain -> TXT
+sub is_txt {
+    my ( $self, $domain, $txt, $test_name ) = @_;
+    $self->_handle_hash_format( 'TXT', $domain, $txt, $test_name ) ||
+        $self->is_record( 'TXT', $domain, $txt );
+    return;
+}
+
 sub _get_method {
     my ( $self, $type ) = @_;
     my %method_by_type = (
@@ -112,6 +120,7 @@ sub _get_method {
         'MX'    => 'exchange',
         'PTR'   => 'ptrdname',
         'CNAME' => 'cname',
+        'TXT'   => 'txtdata',
     );
 
     my $method = $method_by_type{$type};
@@ -201,7 +210,7 @@ Test::DNS - Test DNS queries and zone configuration
 
 =head1 VERSION
 
-Version 0.07
+Version 0.08
 
 =head1 SYNOPSIS
 
@@ -373,6 +382,18 @@ $test_name is not mandatory.
     $dns->is_cname( 'domain' => 'sub.domain' );
 
     $dns->is_cname( 'domain', [ 'sub1.domain', 'sub2.domain' ] );
+
+=head2 is_txt( $domain, $txt, [$test_name] )
+
+Check the TXT records of a domain.
+
+$txt can be an arrayref.
+
+$test_name is not mandatory.
+
+    $dns->is_txt( 'domain' => 'v=spf1 -all' );
+
+    $dns->is_txt( 'domain', [ 'sub1.domain', 'sub2.domain' ] );
 
 =head2 is_record( $type, $input, $expected, [$test_name] )
 
