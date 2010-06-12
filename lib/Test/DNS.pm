@@ -1,4 +1,5 @@
 package Test::DNS;
+# ABSTRACT: Test DNS queries and zone configuration
 
 use Moose;
 use Net::DNS;
@@ -203,14 +204,6 @@ sub _warn {
 1;
 
 __END__
-
-=head1 NAME
-
-Test::DNS - Test DNS queries and zone configuration
-
-=head1 VERSION
-
-Version 0.08
 
 =head1 SYNOPSIS
 
