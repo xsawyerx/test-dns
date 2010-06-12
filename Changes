@@ -1,5 +1,9 @@
 Revision history for Test-DNS
 
+0.08    12.06.10
+        - adding is_txt
+        - switched to dzil, hope it works out
+
 0.07    29.01.10
         - forgot another test to change to perl.com
 
