@@ -22,8 +22,6 @@ has 'object' => ( is => 'ro', isa => 'Net::DNS::Resolver', lazy_build => 1 );
 has 'follow_cname' => ( is => 'rw', isa => 'Bool', default => 0 );
 has 'warnings'     => ( is => 'rw', isa => 'Bool', default => 1 );
 
-our $VERSION = '0.08';
-
 my $CLASS = __PACKAGE__;
 
 sub BUILD {
