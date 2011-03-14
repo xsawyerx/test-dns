@@ -1,5 +1,9 @@
 Revision history for Test-DNS
 
+0.09    15.03.11
+        - moving to dzil
+        - updating dns records information, no functional changes
+
 0.08    12.06.10
         - adding is_txt
         - switched to dzil, hope it works out
