@@ -25,6 +25,7 @@ $dns->is_a( 'ns1.google.com' => '216.239.32.10' );
 
 # the MX records of a domain
 $dns->is_mx( 'google.com' => [
+    'aspmx.l.google.com',
     map { "google.com.s9$_.psmtp.com" } qw/ b1 b2 a1 a2 /,
 ] );
 
@@ -56,6 +57,7 @@ $dns->is_ptr( {
 # MX in hash
 $dns->is_mx( {
         'google.com' => [
+            'aspmx.l.google.com',
             map { "google.com.s9$_.psmtp.com" } qw/ b1 b2 a1 a2 /,
         ],
         'microsoft.com' => 'mail.messaging.microsoft.com',
