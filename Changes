@@ -1,5 +1,8 @@
 Revision history for Test-DNS
 
+0.10    18.05.11
+        - updating dns records information, no functional changes
+
 0.09    15.03.11
         - moving to dzil
         - updating dns records information, no functional changes
