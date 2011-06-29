@@ -5,7 +5,6 @@ use warnings;
 
 use Test::DNS;
 use Test::More tests => 3;
-use Test::Deep::NoTest;
 
 my $dns   = Test::DNS->new( warnings => 0 );
 my @p_ips = qw/207.171.7.63/;
