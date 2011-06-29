@@ -7,10 +7,10 @@ use Test::DNS;
 use Test::More tests => 3;
 
 my $dns   = Test::DNS->new( warnings => 0 );
-my @p_ips = qw/207.171.7.63/;
+my @p_ips = qw/207.171.7.41/;
 
-$dns->is_cname( 'www.perl.org' => 'x3.develooper.com' );
-$dns->is_a( 'x3.develooper.com' => \@p_ips );
+$dns->is_cname( 'www.perl.org' => 'varnish-lb.develooper.com' );
+$dns->is_a( 'varnish-lb.develooper.com' => \@p_ips );
 
 $dns->follow_cname(1);
 $dns->is_a( 'www.perl.org' => \@p_ips );
