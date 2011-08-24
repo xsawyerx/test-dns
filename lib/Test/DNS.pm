@@ -1,3 +1,5 @@
+use strict;
+use warnings;
 package Test::DNS;
 # ABSTRACT: Test DNS queries and zone configuration
 
