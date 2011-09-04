@@ -1,5 +1,9 @@
 Revision history for Test-DNS
 
+0.13    03.09.11
+        - only run tests if got $ENV{'AUTHOR_TESTING'} because I'm sick
+        of releases like 0.10 - 0.13.
+
 0.12    24.08.11
         - updating dns records information, no functional changes
 
