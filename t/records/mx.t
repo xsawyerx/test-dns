@@ -3,8 +3,10 @@
 use strict;
 use warnings;
 
-use Test::More tests => 3;
+use Test::More;
 use Test::DNS;
+
+plan skip_all => 'requires AUTHOR_TESTING' unless $ENV{'AUTHOR_TESTING'};
 
 my $dns = Test::DNS->new();
 
@@ -22,4 +24,6 @@ $dns->is_mx( {
         ],
         'microsoft.com' => 'mail.messaging.microsoft.com',
 } );
+
+done_testing();
 

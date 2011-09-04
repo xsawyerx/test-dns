@@ -3,8 +3,10 @@
 use strict;
 use warnings;
 
-use Test::More tests => 1;
+use Test::More;
 use Test::DNS;
+
+plan skip_all => 'requires AUTHOR_TESTING' unless $ENV{'AUTHOR_TESTING'};
 
 my $dns = Test::DNS->new();
 
@@ -12,4 +14,6 @@ my $dns = Test::DNS->new();
 $dns->is_txt( {
     'godaddy.com' => 'v=spf1 include:spf.secureserver.net -all',
 } );
+
+done_testing();
 

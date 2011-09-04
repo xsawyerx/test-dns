@@ -3,8 +3,10 @@
 use strict;
 use warnings;
 
-use Test::More tests => 3;
+use Test::More;
 use Test::DNS;
+
+plan skip_all => 'requires AUTHOR_TESTING' unless $ENV{'AUTHOR_TESTING'};
 
 my $dns = Test::DNS->new();
 
@@ -17,4 +19,6 @@ $dns->is_a( {
     'ns1.google.com' => [ '216.239.32.10' ],
     'ns2.google.com' =>   '216.239.34.10',
 } );
+
+done_testing();
 
