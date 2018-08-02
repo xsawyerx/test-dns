@@ -82,7 +82,7 @@ sub is_a {
 sub is_ptr {
     my ( $self, $ip, $domains, $test_name ) = @_;
     $self->_handle_hash_format( 'PTR', $ip, $domains, $test_name ) ||
-        $self->is_record( 'PTR', $ip, $domains );
+        $self->is_record( 'PTR', $ip, $domains, $test_name );
     return;
 }
 
@@ -90,7 +90,7 @@ sub is_ptr {
 sub is_ns {
     my ( $self, $domain, $ns, $test_name ) = @_;
     $self->_handle_hash_format( 'NS', $domain, $ns, $test_name ) ||
-        $self->is_record( 'NS', $domain, $ns );
+        $self->is_record( 'NS', $domain, $ns, $test_name );
     return;
 }
 
@@ -98,7 +98,7 @@ sub is_ns {
 sub is_mx {
     my ( $self, $domain, $mx, $test_name ) = @_;
     $self->_handle_hash_format( 'MX', $domain, $mx, $test_name ) ||
-        $self->is_record( 'MX', $domain, $mx );
+        $self->is_record( 'MX', $domain, $mx, $test_name );
     return;
 }
 
@@ -106,7 +106,7 @@ sub is_mx {
 sub is_cname {
     my ( $self, $domain, $cname, $test_name ) = @_;
     $self->_handle_hash_format( 'CNAME', $domain, $cname, $test_name ) ||
-        $self->is_record( 'CNAME', $domain, $cname );
+        $self->is_record( 'CNAME', $domain, $cname, $test_name );
     return;
 }
 
@@ -114,7 +114,7 @@ sub is_cname {
 sub is_txt {
     my ( $self, $domain, $txt, $test_name ) = @_;
     $self->_handle_hash_format( 'TXT', $domain, $txt, $test_name ) ||
-        $self->is_record( 'TXT', $domain, $txt );
+        $self->is_record( 'TXT', $domain, $txt, $test_name );
     return;
 }
 
