@@ -37,8 +37,13 @@ sub BUILD {
 sub _build_object {
     my $self = shift;
 
+    # don't pass in an empty "nameservers" parameter. Let Net::DNS::Resolver figure it out.
+    my %build_params = ();
+    if ( scalar @{$self->nameservers} ) {
+        $build_params{nameservers} = $self->nameservers;
+    }
     return Net::DNS::Resolver->new(
-        nameservers => $self->nameservers,
+        %build_params
     );
 }
 
