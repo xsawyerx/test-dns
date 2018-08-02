@@ -44,7 +44,7 @@ sub _build_object {
     );
 }
 
-sub _handle_hash_format {
+sub _is_in_hash_format {
     my ( $self, $type, $hashref, $test_name, $extra ) = @_;
     my $EMPTY = q{};
     $test_name ||= $EMPTY;
@@ -59,63 +59,87 @@ sub _handle_hash_format {
             # $hashref is hashref
             # $test_name isn't a ref
             # \$test_name is a SCALAR ref
-            while ( my ( $domain, $ips ) = each %{$hashref} ) {
-                $self->is_record( $type, $domain, $ips, $test_name );
-            }
-
             return 1;
         }
     }
-
     return;
+}
+
+# returns:
+#   false if any assertions failed
+#   true if all assertions passed
+sub _handle_hash_format {
+    my ( $self, $type, $hashref, $test_name, $extra ) = @_;
+
+    if ( ! $self->_is_in_hash_format( $type, $hashref, $test_name, $extra ) ) {
+        # this method was called on the wrong format
+        return;
+    }
+
+    my $EMPTY = q{};
+    $test_name ||= $EMPTY;
+
+    my $all_passed = 1;
+    while ( my ( $domain, $ips ) = each %{$hashref} ) {
+        if ( ! $self->is_record( $type, $domain, $ips, $test_name ) ) {
+            $all_passed = 0;
+        }
+    }
+    return $all_passed;
 }
 
 # A -> IP
 sub is_a {
     my ( $self, $domain, $ips, $test_name ) = @_;
-    $self->_handle_hash_format( 'A', $domain, $ips, $test_name ) ||
-        $self->is_record( 'A', $domain, $ips, $test_name );
-    return;
+    if ( $self->_is_in_hash_format( 'A', $domain, $ips, $test_name ) ) {
+        return $self->_handle_hash_format( 'A', $domain, $ips, $test_name );
+    }
+    return $self->is_record( 'A', $domain, $ips, $test_name );
 }
 
 # PTR -> A
 sub is_ptr {
     my ( $self, $ip, $domains, $test_name ) = @_;
-    $self->_handle_hash_format( 'PTR', $ip, $domains, $test_name ) ||
-        $self->is_record( 'PTR', $ip, $domains, $test_name );
-    return;
+    if ( $self->_is_in_hash_format( 'PTR', $ip, $domains, $test_name ) ) {
+        return $self->_handle_hash_format( 'PTR', $ip, $domains, $test_name );
+    }
+    return $self->is_record( 'PTR', $ip, $domains, $test_name );
 }
 
 # Domain -> NS
 sub is_ns {
     my ( $self, $domain, $ns, $test_name ) = @_;
-    $self->_handle_hash_format( 'NS', $domain, $ns, $test_name ) ||
-        $self->is_record( 'NS', $domain, $ns, $test_name );
-    return;
+    if ( $self->_is_in_hash_format( 'NS', $domain, $ns, $test_name ) ) {
+        return $self->_handle_hash_format( 'NS', $domain, $ns, $test_name );
+    }
+    return $self->is_record( 'NS', $domain, $ns, $test_name );
 }
 
 # Domain -> MX
 sub is_mx {
     my ( $self, $domain, $mx, $test_name ) = @_;
-    $self->_handle_hash_format( 'MX', $domain, $mx, $test_name ) ||
-        $self->is_record( 'MX', $domain, $mx, $test_name );
-    return;
+    if ( $self->_is_in_hash_format( 'MX', $domain, $mx, $test_name ) ) {
+        return $self->_handle_hash_format( 'MX', $domain, $mx, $test_name );
+    }
+    return $self->is_record( 'MX', $domain, $mx, $test_name );
 }
 
 # Domain -> CNAME
 sub is_cname {
     my ( $self, $domain, $cname, $test_name ) = @_;
-    $self->_handle_hash_format( 'CNAME', $domain, $cname, $test_name ) ||
-        $self->is_record( 'CNAME', $domain, $cname, $test_name );
-    return;
+    if ( $self->_is_in_hash_format( 'CNAME', $domain, $cname, $test_name ) ) {
+        return $self->_handle_hash_format( 'CNAME', $domain, $cname, $test_name );
+    }
+    return $self->is_record( 'CNAME', $domain, $cname, $test_name );
 }
 
 # Domain -> TXT
 sub is_txt {
     my ( $self, $domain, $txt, $test_name ) = @_;
-    $self->_handle_hash_format( 'TXT', $domain, $txt, $test_name ) ||
-        $self->is_record( 'TXT', $domain, $txt, $test_name );
-    return;
+    if ( $self->_is_in_hash_format( 'TXT', $domain, $txt, $test_name ) ) {
+        return $self->_handle_hash_format( 'TXT', $domain, $txt, $test_name );
+    }
+    return $self->is_record( 'TXT', $domain, $txt, $test_name );
 }
 
 sub _get_method {
@@ -189,9 +213,7 @@ sub is_record {
         }
     }
 
-    cmp_bag( [ $results->members ], $expected, $test_name );
-
-    return;
+    return cmp_bag( [ $results->members ], $expected, $test_name );
 }
 
 sub _warn {
@@ -333,6 +355,8 @@ $test_name is not mandatory.
 
     $dns->is_a( 'domain', [ 'IP1', 'IP2' ] );
 
+Returns false if the assertion fails.
+
 =head2 is_ns( $domain, $ips, [$test_name] )
 
 Check the NS record resolving of a domain or subdomain.
@@ -344,6 +368,8 @@ $test_name is not mandatory.
     $dns->is_ns( 'domain' => 'IP' );
 
     $dns->is_ns( 'domain', [ 'IP1', 'IP2' ] );
+
+Returns false if the assertion fails.
 
 =head2 is_ptr( $ip, $domains, [$test_name] )
 
@@ -357,6 +383,8 @@ $test_name is not mandatory.
 
     $dns->is_ptr( 'IP', [ 'first.ptr.domain', 'second.ptr.domain' ] );
 
+Returns false if the assertion fails.
+
 =head2 is_mx( $domain, $domains, [$test_name] )
 
 Check the MX records of a domain.
@@ -368,6 +396,8 @@ $test_name is not mandatory.
     $dns->is_mx( 'domain' => 'mailer.domain' );
 
     $dns->is_ptr( 'domain', [ 'mailer1.domain', 'mailer2.domain' ] );
+
+Returns false if the assertion fails.
 
 =head2 is_cname( $domain, $domains, [$test_name] )
 
@@ -381,6 +411,8 @@ $test_name is not mandatory.
 
     $dns->is_cname( 'domain', [ 'sub1.domain', 'sub2.domain' ] );
 
+Returns false if the assertion fails.
+
 =head2 is_txt( $domain, $txt, [$test_name] )
 
 Check the TXT records of a domain.
@@ -392,6 +424,8 @@ $test_name is not mandatory.
     $dns->is_txt( 'domain' => 'v=spf1 -all' );
 
     $dns->is_txt( 'domain', [ 'sub1.domain', 'sub2.domain' ] );
+
+Returns false if the assertion fails.
 
 =head2 is_record( $type, $input, $expected, [$test_name] )
 
@@ -406,6 +440,8 @@ $expected can be an arrayref.
 $test_name is not mandatory.
 
     $dns->is_record( 'CNAME', 'domain', 'sub.domain', 'test_name' );
+
+Returns false if the assertion fails.
 
 =head2 BUILD
 
@@ -426,6 +462,8 @@ case.
 
     # number of tests: keys %{$tests}, test name: $tests->{'name'}
     $dns->is_a( $tests, delete $tests->{'name'} ); # $tests is a hashref
+
+Returns false if any of the assertions fail.
 
 =head1 DEPENDENCIES
 
