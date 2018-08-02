@@ -9,10 +9,12 @@ use Test::More;
 plan skip_all => 'requires AUTHOR_TESTING' unless $ENV{'AUTHOR_TESTING'};
 
 my $dns   = Test::DNS->new( warnings => 0 );
-my @p_ips = qw/207.171.7.41 207.171.7.51/;
 
-$dns->is_cname( 'www.perl.org' => 'varnish-lb.develooper.com' );
-$dns->is_a( 'varnish-lb.develooper.com' => \@p_ips );
+my $cname = 'dualstack.h2.shared.global.fastly.net';
+my @p_ips = qw/151.101.186.49/;
+
+$dns->is_cname( 'www.perl.org' => $cname );
+$dns->is_a( $cname => \@p_ips );
 
 $dns->follow_cname(1);
 $dns->is_a( 'www.perl.org' => \@p_ips );
