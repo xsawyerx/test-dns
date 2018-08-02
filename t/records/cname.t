@@ -11,18 +11,18 @@ plan skip_all => 'requires AUTHOR_TESTING' unless $ENV{'AUTHOR_TESTING'};
 my $dns = Test::DNS->new();
 
 # the CNAME record of a domain
-$dns->is_cname( 'www.google.com' => 'www.l.google.com' );
+$dns->is_cname( 'mail.google.com' => 'googlemail.l.google.com' );
 
 # CNAME in hash
 $dns->is_cname( {
-    'www.google.com' => 'www.l.google.com',
-    'www.perl.org'   => 'varnish-lb.develooper.com',
+    'mail.google.com' => 'googlemail.l.google.com',
+    'www.perl.org'   => 'dualstack.h2.shared.global.fastly.net',
 } );
 
 # CNAME in hash with test_name
 $dns->is_cname( {
-    'www.google.com' => 'www.l.google.com',
-    'www.perl.org'   => 'varnish-lb.develooper.com',
+    'mail.google.com' => 'googlemail.l.google.com',
+    'www.perl.org'   => 'dualstack.h2.shared.global.fastly.net',
 }, 'Checking CNAMES for google.com and perl.org' );
 
 done_testing();
