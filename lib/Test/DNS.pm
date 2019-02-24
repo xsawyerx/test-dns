@@ -66,61 +66,65 @@ sub _handle_hash_format {
         # $hashref is hashref
         # $test_name isn't a ref
         # \$test_name is a SCALAR ref
+        my $all_passed = 1;
         foreach my $domain ( keys %{$hashref} ) {
             my $ips = $hashref->{$domain};
-            $self->is_record( $type, $domain, $ips, $test_name );
+            $self->is_record( $type, $domain, $ips, $test_name )
+                or $all_passed = 0;
         }
 
-        return 1;
+        return $all_passed;
     }
+
+    return;
 }
 
 # A -> IP
 sub is_a {
     my ( $self, $domain, $ips, $test_name ) = @_;
-    $self->_handle_hash_format( 'A', $domain, $ips, $test_name ) ||
-        $self->is_record( 'A', $domain, $ips, $test_name );
-    return;
+
+    return $self->_handle_hash_format( 'A', $domain, $ips, $test_name )
+        || $self->is_record( 'A', $domain, $ips, $test_name );
 }
 
 # PTR -> A
 sub is_ptr {
     my ( $self, $ip, $domains, $test_name ) = @_;
-    $self->_handle_hash_format( 'PTR', $ip, $domains, $test_name ) ||
-        $self->is_record( 'PTR', $ip, $domains, $test_name );
-    return;
+
+    return $self->_handle_hash_format( 'PTR', $ip, $domains, $test_name )
+        || $self->is_record( 'PTR', $ip, $domains, $test_name );
 }
 
 # Domain -> NS
 sub is_ns {
     my ( $self, $domain, $ns, $test_name ) = @_;
-    $self->_handle_hash_format( 'NS', $domain, $ns, $test_name ) ||
-        $self->is_record( 'NS', $domain, $ns, $test_name );
-    return;
+
+    return $self->_handle_hash_format( 'NS', $domain, $ns, $test_name )
+        || $self->is_record( 'NS', $domain, $ns, $test_name );
 }
 
 # Domain -> MX
 sub is_mx {
     my ( $self, $domain, $mx, $test_name ) = @_;
-    $self->_handle_hash_format( 'MX', $domain, $mx, $test_name ) ||
-        $self->is_record( 'MX', $domain, $mx, $test_name );
-    return;
+
+    return $self->_handle_hash_format( 'MX', $domain, $mx, $test_name )
+        || $self->is_record( 'MX', $domain, $mx, $test_name );
 }
 
 # Domain -> CNAME
 sub is_cname {
     my ( $self, $domain, $cname, $test_name ) = @_;
-    $self->_handle_hash_format( 'CNAME', $domain, $cname, $test_name ) ||
-        $self->is_record( 'CNAME', $domain, $cname, $test_name );
-    return;
+
+    return $self->_handle_hash_format( 'CNAME', $domain, $cname, $test_name )
+        || $self->is_record( 'CNAME', $domain, $cname, $test_name );
 }
 
 # Domain -> TXT
 sub is_txt {
     my ( $self, $domain, $txt, $test_name ) = @_;
-    $self->_handle_hash_format( 'TXT', $domain, $txt, $test_name ) ||
-        $self->is_record( 'TXT', $domain, $txt, $test_name );
-    return;
+
+    return $self->_handle_hash_format( 'TXT', $domain, $txt, $test_name )
+        || $self->is_record( 'TXT', $domain, $txt, $test_name );
 }
 
 sub _get_method {
@@ -194,9 +198,7 @@ sub is_record {
         }
     }
 
-    cmp_bag( [ $results->members ], $expected, $test_name );
-
-    return;
+    return cmp_bag( [ $results->members ], $expected, $test_name );
 }
 
 sub _warn {
@@ -275,7 +277,7 @@ chaining if one has such an odd case.
 New in version 0.04 is the option to give a hashref as the testing values (not
 including a test name as well), which makes things much easier to test if you
 want to run multiple tests and don't want to write multiple lines. This helps
-connect Test::DNS with freshly-parsed data (YAML/JSON/XML/etc.).
+connect L<Test::DNS> with freshly-parsed data (YAML/JSON/XML/etc.).
 
     use Test::DNS;
     use YAML 'LoadFile';
@@ -335,87 +337,101 @@ Default: 0 (off).
 
 Check the A record resolving of domain or subdomain.
 
-$ip can be an arrayref.
+C<$ip> can be an arrayref.
 
-$test_name is not mandatory.
+C<$test_name> is not mandatory.
 
     $dns->is_a( 'domain' => 'IP' );
 
     $dns->is_a( 'domain', [ 'IP1', 'IP2' ] );
 
+Returns false if the assertion fails.
+
 =head2 is_ns( $domain, $ips, [$test_name] )
 
 Check the NS record resolving of a domain or subdomain.
 
-$ip can be an arrayref.
+C<$ip> can be an arrayref.
 
-$test_name is not mandatory.
+C<$test_name> is not mandatory.
 
     $dns->is_ns( 'domain' => 'IP' );
 
     $dns->is_ns( 'domain', [ 'IP1', 'IP2' ] );
 
+Returns false if the assertion fails.
+
 =head2 is_ptr( $ip, $domains, [$test_name] )
 
 Check the PTR records of an IP.
 
-$domains can be an arrayref.
+C<$domains> can be an arrayref.
 
-$test_name is not mandatory.
+C<$test_name> is not mandatory.
 
     $dns->is_ptr( 'IP' => 'ptr.records.domain' );
 
     $dns->is_ptr( 'IP', [ 'first.ptr.domain', 'second.ptr.domain' ] );
 
+Returns false if the assertion fails.
+
 =head2 is_mx( $domain, $domains, [$test_name] )
 
 Check the MX records of a domain.
 
-$domains can be an arrayref.
+C<$domains> can be an arrayref.
 
-$test_name is not mandatory.
+C<$test_name> is not mandatory.
 
     $dns->is_mx( 'domain' => 'mailer.domain' );
 
     $dns->is_ptr( 'domain', [ 'mailer1.domain', 'mailer2.domain' ] );
 
+Returns false if the assertion fails.
+
 =head2 is_cname( $domain, $domains, [$test_name] )
 
 Check the CNAME records of a domain.
 
-$domains can be an arrayref.
+C<$domains> can be an arrayref.
 
-$test_name is not mandatory.
+C<$test_name> is not mandatory.
 
     $dns->is_cname( 'domain' => 'sub.domain' );
 
     $dns->is_cname( 'domain', [ 'sub1.domain', 'sub2.domain' ] );
 
+Returns false if the assertion fails.
+
 =head2 is_txt( $domain, $txt, [$test_name] )
 
 Check the TXT records of a domain.
 
-$txt can be an arrayref.
+C<$txt> can be an arrayref.
 
-$test_name is not mandatory.
+C<$test_name> is not mandatory.
 
     $dns->is_txt( 'domain' => 'v=spf1 -all' );
 
     $dns->is_txt( 'domain', [ 'sub1.domain', 'sub2.domain' ] );
 
+Returns false if the assertion fails.
+
 =head2 is_record( $type, $input, $expected, [$test_name] )
 
 The general function all the other is_* functions run.
 
-$type is the record type (CNAME, A, NS, PTR, MX, etc.).
+C<$type> is the record type (CNAME, A, NS, PTR, MX, etc.).
 
-$input is the domain or IP you're testing.
+C<$input> is the domain or IP you're testing.
 
-$expected can be an arrayref.
+C<$expected> can be an arrayref.
 
-$test_name is not mandatory.
+C<$test_name> is not mandatory.
 
     $dns->is_record( 'CNAME', 'domain', 'sub.domain', 'test_name' );
+
+Returns false if the assertion fails.
 
 =head2 BUILD
 
