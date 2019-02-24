@@ -7,6 +7,11 @@ use Test::Deep 'cmp_bag';
 use Set::Object 'set';
 use parent 'Test::Builder::Module';
 
+use constant {
+    'MIN_ARGS' => 3,
+    'MAX_ARGS' => 4,
+}
+
 has 'nameservers' => (
     is        => 'rw',
     isa       => 'ArrayRef',
@@ -46,11 +51,10 @@ sub _build_object {
 
 sub _handle_hash_format {
     my ( $self, $type, $hashref, $test_name, $extra ) = @_;
-    my $EMPTY = q{};
-    $test_name ||= $EMPTY;
+    $test_name ||= '';
 
     # special hash construct
-    if ( @_ >= 3 || @_ <= 4 ) {
+    if ( @_ >= MIN_ARGS() || @_ <= MAX_ARGS() ) {
         # $self, $type, $hashref             OR
         # $self, $type, $hashref, $test_name
         if ( ref $hashref eq 'HASH' &&
@@ -59,7 +63,8 @@ sub _handle_hash_format {
             # $hashref is hashref
             # $test_name isn't a ref
             # \$test_name is a SCALAR ref
-            while ( my ( $domain, $ips ) = each %{$hashref} ) {
+            foreach my $domain ( keys %{$hashref} ) {
+                my $ips = $hashref->{$domain};
                 $self->is_record( $type, $domain, $ips, $test_name );
             }
 
@@ -205,6 +210,9 @@ sub _warn {
 
     return;
 }
+
+no Moose;
+__PACKAGE__->meta->make_immutable;
 
 1;
 
