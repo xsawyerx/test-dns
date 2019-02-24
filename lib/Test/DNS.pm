@@ -8,10 +8,11 @@ use Set::Object 'set';
 use parent 'Test::Builder::Module';
 
 has 'nameservers' => (
-    is      => 'rw',
-    isa     => 'ArrayRef',
-    default => sub { [] },
-    trigger => sub {
+    is        => 'rw',
+    isa       => 'ArrayRef',
+    predicate => 'has_nameservers',
+    default   => sub { [] },
+    trigger   => sub {
         my ( $self, $nameservers ) = @_;
         $self->object->nameservers( @{$nameservers} );
     },
@@ -37,13 +38,9 @@ sub BUILD {
 sub _build_object {
     my $self = shift;
 
-    # don't pass in an empty "nameservers" parameter. Let Net::DNS::Resolver figure it out.
-    my %build_params = ();
-    if ( scalar @{$self->nameservers} ) {
-        $build_params{nameservers} = $self->nameservers;
-    }
+    # Only pass nameservers if we have nameservers
     return Net::DNS::Resolver->new(
-        %build_params
+        ( 'nameservers' => $self->nameservers )x!! $self->has_nameservers,
     );
 }
 
