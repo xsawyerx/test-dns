@@ -17,7 +17,11 @@ has 'nameservers' => (
     },
 );
 
-has 'object' => ( is => 'ro', isa => 'Net::DNS::Resolver', lazy_build => 1 );
+has 'object' => (
+    is         => 'ro',
+    isa        => 'Net::DNS::Resolver',
+    lazy_build => 1,
+);
 
 has 'follow_cname' => ( is => 'rw', isa => 'Bool', default => 0 );
 has 'warnings'     => ( is => 'rw', isa => 'Bool', default => 1 );
@@ -202,6 +206,8 @@ sub _warn {
 1;
 
 __END__
+
+=pod
 
 =head1 SYNOPSIS
 
@@ -478,7 +484,7 @@ L<http://search.cpan.org/dist/Test-DNS/>
 
 =head1 LICENSE AND COPYRIGHT
 
-Copyright 2010 Sawyer X.
+Copyright 2019 Sawyer X.
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of either: the GNU General Public License as published
