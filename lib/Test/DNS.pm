@@ -53,26 +53,26 @@ sub _handle_hash_format {
     my ( $self, $type, $hashref, $test_name, $extra ) = @_;
     $test_name ||= '';
 
+    @_ < MIN_ARGS() || @_ > MAX_ARGS()
+        and return;
+
     # special hash construct
-    if ( @_ >= MIN_ARGS() || @_ <= MAX_ARGS() ) {
-        # $self, $type, $hashref             OR
-        # $self, $type, $hashref, $test_name
-        if ( ref $hashref eq 'HASH' &&
-           ! ref $test_name         &&
-             ref \$test_name eq 'SCALAR' ) {
-            # $hashref is hashref
-            # $test_name isn't a ref
-            # \$test_name is a SCALAR ref
-            foreach my $domain ( keys %{$hashref} ) {
-                my $ips = $hashref->{$domain};
-                $self->is_record( $type, $domain, $ips, $test_name );
-            }
-
-            return 1;
+    # $self, $type, $hashref
+    # OR
+    # $self, $type, $hashref, $test_name
+    if ( ref $hashref eq 'HASH' &&
+       ! ref $test_name         &&
+         ref \$test_name eq 'SCALAR' ) {
+        # $hashref is hashref
+        # $test_name isn't a ref
+        # \$test_name is a SCALAR ref
+        foreach my $domain ( keys %{$hashref} ) {
+            my $ips = $hashref->{$domain};
+            $self->is_record( $type, $domain, $ips, $test_name );
         }
-    }
 
-    return;
+        return 1;
+    }
 }
 
 # A -> IP
