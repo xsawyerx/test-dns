@@ -5,7 +5,7 @@ use Moose;
 use Net::DNS;
 use Test::Deep 'cmp_bag';
 use Set::Object 'set';
-use base 'Test::Builder::Module';
+use parent 'Test::Builder::Module';
 
 has 'nameservers' => (
     is      => 'rw',
