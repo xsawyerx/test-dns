@@ -20,7 +20,8 @@ has 'nameservers' => (
 has 'object' => (
     is         => 'ro',
     isa        => 'Net::DNS::Resolver',
-    lazy_build => 1,
+    lazy       => 1,
+    builder    => '_build_object',
 );
 
 has 'follow_cname' => ( is => 'rw', isa => 'Bool', default => 0 );
