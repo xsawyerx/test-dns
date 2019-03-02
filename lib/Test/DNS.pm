@@ -30,8 +30,17 @@ has 'object' => (
     'builder'    => '_build_object',
 );
 
-has 'follow_cname' => ( 'is' => 'rw', 'isa' => 'Bool', 'default' => 0 );
-has 'warnings'     => ( 'is' => 'rw', 'isa' => 'Bool', 'default' => 1 );
+has 'follow_cname' => (
+    'is'      => 'rw',
+    'isa'     => 'Bool',
+    'default' => sub {0},
+);
+
+has 'warnings' => (
+    'is'      => 'rw',
+    'isa'     => 'Bool',
+    'default' => sub {1},
+);
 
 my $CLASS = __PACKAGE__;
 
