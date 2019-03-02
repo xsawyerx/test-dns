@@ -57,8 +57,8 @@ sub _handle_hash_format {
     my ( $self, $type, $hashref, $test_name, $extra ) = @_;
     $test_name ||= '';
 
-    @_ < MIN_ARGS() || @_ > MAX_ARGS()
-        and return;
+    @_ >= MIN_ARGS() || @_ <= MAX_ARGS()
+        or return;
 
     # special hash construct
     # $self, $type, $hashref
