@@ -1,6 +1,8 @@
 Revision history for Test-DNS
 
 {{$NEXT}}
+
+0.200     2019-03-02 23:41:37+02:00 Asia/Jerusalem
         - All attributes are now immutable. If you need to change
           anything (nameservers, the object, even the follow_cname
           flag), create a new instance. Sorry and thank you.
