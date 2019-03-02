@@ -24,10 +24,10 @@ has 'nameservers' => (
 );
 
 has 'object' => (
-    'is'         => 'ro',
-    'isa'        => 'Net::DNS::Resolver',
-    'lazy'       => 1,
-    'builder'    => '_build_object',
+    'is'      => 'ro',
+    'isa'     => 'Net::DNS::Resolver',
+    'lazy'    => 1,
+    'builder' => '_build_object',
 );
 
 has 'follow_cname' => (
@@ -52,8 +52,8 @@ sub BUILD {
 sub _build_object {
     my $self = shift;
 
-    # Only pass nameservers if we have nameservers
     return Net::DNS::Resolver->new(
+        # Only pass nameservers if we have nameservers
         ( 'nameservers' => $self->nameservers )x!! $self->has_nameservers,
     );
 }
