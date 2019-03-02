@@ -16,11 +16,6 @@ has 'nameservers' => (
     'is'        => 'ro',
     'isa'       => 'ArrayRef',
     'predicate' => 'has_nameservers',
-    'default'   => sub { [] },
-    'trigger'   => sub {
-        my ( $self, $nameservers ) = @_;
-        $self->object->nameservers( @{$nameservers} );
-    },
 );
 
 has 'object' => (
