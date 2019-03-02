@@ -213,7 +213,8 @@ sub is_record {
 sub _warn {
     my ( $self, $type, $msg ) = @_;
 
-    $self->warnings || return;
+    $self->warnings
+        or return;
 
     chomp $msg;
     my $tb = $CLASS->builder;
