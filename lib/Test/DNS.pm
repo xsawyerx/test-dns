@@ -13,7 +13,7 @@ use constant {
 }
 
 has 'nameservers' => (
-    'is'        => 'rw',
+    'is'        => 'ro',
     'isa'       => 'ArrayRef',
     'predicate' => 'has_nameservers',
     'default'   => sub { [] },
@@ -31,13 +31,13 @@ has 'object' => (
 );
 
 has 'follow_cname' => (
-    'is'      => 'rw',
+    'is'      => 'ro',
     'isa'     => 'Bool',
     'default' => sub {0},
 );
 
 has 'warnings' => (
-    'is'      => 'rw',
+    'is'      => 'ro',
     'isa'     => 'Bool',
     'default' => sub {1},
 );
