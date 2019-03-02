@@ -16,13 +16,13 @@ $dns->is_cname( 'mail.google.com' => 'googlemail.l.google.com' );
 # CNAME in hash
 $dns->is_cname( {
     'mail.google.com' => 'googlemail.l.google.com',
-    'www.perl.org'   => 'dualstack.h2.shared.global.fastly.net',
+    'www.perl.org'    => 'cdn-fastly.perl.org',
 } );
 
 # CNAME in hash with test_name
 $dns->is_cname( {
     'mail.google.com' => 'googlemail.l.google.com',
-    'www.perl.org'   => 'dualstack.h2.shared.global.fastly.net',
+    'www.perl.org'    => 'cdn-fastly.perl.org',
 }, 'Checking CNAMES for google.com and perl.org' );
 
 done_testing();
