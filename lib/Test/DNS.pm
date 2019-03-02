@@ -176,15 +176,14 @@ sub _recurse_a_records {
 sub is_record {
     my ( $self, $type, $input, $expected, $test_name ) = @_;
 
-    my $res        = $self->object;
-    my $tb         = $CLASS->builder;
-    my $method     = $self->_get_method($type);
-    my $query_res  = $res->query( $input, $type );
-    my $COMMASPACE = q{, };
-    my $results    = set();
+    my $res       = $self->object;
+    my $tb        = $CLASS->builder;
+    my $method    = $self->_get_method($type);
+    my $query_res = $res->query( $input, $type );
+    my $results   = set();
 
     ( ref $expected eq 'ARRAY' ) || ( $expected = [ $expected ] );
-    $test_name ||= "[$type] $input -> " . join $COMMASPACE, @{$expected};
+    $test_name ||= "[$type] $input -> " . join ', ', @{$expected};
 
     if (!$query_res) {
         $self->_warn( $type, "'$input' has no query result" );
