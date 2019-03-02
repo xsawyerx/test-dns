@@ -13,25 +13,25 @@ use constant {
 }
 
 has 'nameservers' => (
-    is        => 'rw',
-    isa       => 'ArrayRef',
-    predicate => 'has_nameservers',
-    default   => sub { [] },
-    trigger   => sub {
+    'is'        => 'rw',
+    'isa'       => 'ArrayRef',
+    'predicate' => 'has_nameservers',
+    'default'   => sub { [] },
+    'trigger'   => sub {
         my ( $self, $nameservers ) = @_;
         $self->object->nameservers( @{$nameservers} );
     },
 );
 
 has 'object' => (
-    is         => 'ro',
-    isa        => 'Net::DNS::Resolver',
-    lazy       => 1,
-    builder    => '_build_object',
+    'is'         => 'ro',
+    'isa'        => 'Net::DNS::Resolver',
+    'lazy'       => 1,
+    'builder'    => '_build_object',
 );
 
-has 'follow_cname' => ( is => 'rw', isa => 'Bool', default => 0 );
-has 'warnings'     => ( is => 'rw', isa => 'Bool', default => 1 );
+has 'follow_cname' => ( 'is' => 'rw', 'isa' => 'Bool', 'default' => 0 );
+has 'warnings'     => ( 'is' => 'rw', 'isa' => 'Bool', 'default' => 1 );
 
 my $CLASS = __PACKAGE__;
 
