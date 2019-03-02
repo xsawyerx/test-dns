@@ -61,7 +61,7 @@ chaining if one has such an odd case.
 New in version 0.04 is the option to give a hashref as the testing values (not
 including a test name as well), which makes things much easier to test if you
 want to run multiple tests and don't want to write multiple lines. This helps
-connect Test::DNS with freshly-parsed data (YAML/JSON/XML/etc.).
+connect [Test::DNS](https://metacpan.org/pod/Test::DNS) with freshly-parsed data (YAML/JSON/XML/etc.).
 
     use Test::DNS;
     use YAML 'LoadFile';
@@ -121,87 +121,101 @@ Default: 0 (off).
 
 Check the A record resolving of domain or subdomain.
 
-$ip can be an arrayref.
+`$ip` can be an arrayref.
 
-$test\_name is not mandatory.
+`$test_name` is not mandatory.
 
     $dns->is_a( 'domain' => 'IP' );
 
     $dns->is_a( 'domain', [ 'IP1', 'IP2' ] );
 
+Returns false if the assertion fails.
+
 ## is\_ns( $domain, $ips, \[$test\_name\] )
 
 Check the NS record resolving of a domain or subdomain.
 
-$ip can be an arrayref.
+`$ip` can be an arrayref.
 
-$test\_name is not mandatory.
+`$test_name` is not mandatory.
 
     $dns->is_ns( 'domain' => 'IP' );
 
     $dns->is_ns( 'domain', [ 'IP1', 'IP2' ] );
 
+Returns false if the assertion fails.
+
 ## is\_ptr( $ip, $domains, \[$test\_name\] )
 
 Check the PTR records of an IP.
 
-$domains can be an arrayref.
+`$domains` can be an arrayref.
 
-$test\_name is not mandatory.
+`$test_name` is not mandatory.
 
     $dns->is_ptr( 'IP' => 'ptr.records.domain' );
 
     $dns->is_ptr( 'IP', [ 'first.ptr.domain', 'second.ptr.domain' ] );
 
+Returns false if the assertion fails.
+
 ## is\_mx( $domain, $domains, \[$test\_name\] )
 
 Check the MX records of a domain.
 
-$domains can be an arrayref.
+`$domains` can be an arrayref.
 
-$test\_name is not mandatory.
+`$test_name` is not mandatory.
 
     $dns->is_mx( 'domain' => 'mailer.domain' );
 
     $dns->is_ptr( 'domain', [ 'mailer1.domain', 'mailer2.domain' ] );
 
+Returns false if the assertion fails.
+
 ## is\_cname( $domain, $domains, \[$test\_name\] )
 
 Check the CNAME records of a domain.
 
-$domains can be an arrayref.
+`$domains` can be an arrayref.
 
-$test\_name is not mandatory.
+`$test_name` is not mandatory.
 
     $dns->is_cname( 'domain' => 'sub.domain' );
 
     $dns->is_cname( 'domain', [ 'sub1.domain', 'sub2.domain' ] );
 
+Returns false if the assertion fails.
+
 ## is\_txt( $domain, $txt, \[$test\_name\] )
 
 Check the TXT records of a domain.
 
-$txt can be an arrayref.
+`$txt` can be an arrayref.
 
-$test\_name is not mandatory.
+`$test_name` is not mandatory.
 
     $dns->is_txt( 'domain' => 'v=spf1 -all' );
 
     $dns->is_txt( 'domain', [ 'sub1.domain', 'sub2.domain' ] );
 
+Returns false if the assertion fails.
+
 ## is\_record( $type, $input, $expected, \[$test\_name\] )
 
 The general function all the other is\_\* functions run.
 
-$type is the record type (CNAME, A, NS, PTR, MX, etc.).
+`$type` is the record type (CNAME, A, NS, PTR, MX, etc.).
 
-$input is the domain or IP you're testing.
+`$input` is the domain or IP you're testing.
 
-$expected can be an arrayref.
+`$expected` can be an arrayref.
 
-$test\_name is not mandatory.
+`$test_name` is not mandatory.
 
     $dns->is_record( 'CNAME', 'domain', 'sub.domain', 'test_name' );
+
+Returns false if the assertion fails.
 
 ## BUILD
 
@@ -277,7 +291,7 @@ You can also look for information at:
 
 # LICENSE AND COPYRIGHT
 
-Copyright 2010 Sawyer X.
+Copyright 2019 Sawyer X.
 
 This program is free software; you can redistribute it and/or modify it
 under the terms of either: the GNU General Public License as published
