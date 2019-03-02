@@ -147,8 +147,7 @@ sub _get_method {
         'TXT'   => 'txtdata',
     );
 
-    my $method = $method_by_type{$type};
-    return $method ? $method : 0;
+    return $method_by_type{$type} || 0;
 }
 
 sub _recurse_a_records {
