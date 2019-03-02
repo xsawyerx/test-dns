@@ -10,7 +10,7 @@ use parent 'Test::Builder::Module';
 use constant {
     'MIN_ARGS' => 3,
     'MAX_ARGS' => 4,
-}
+};
 
 has 'nameservers' => (
     'is'        => 'ro',
