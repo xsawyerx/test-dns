@@ -8,8 +8,8 @@ use Set::Object 'set';
 use parent 'Test::Builder::Module';
 
 use constant {
-    'MIN_ARGS' => 3,
-    'MAX_ARGS' => 4,
+    'MIN_HASH_ARGS' => 3,
+    'MAX_HASH_ARGS' => 4,
 };
 
 has 'nameservers' => (
@@ -53,82 +53,80 @@ sub _build_object {
     );
 }
 
-sub _handle_hash_format {
+sub _is_hash_format {
     my ( $self, $type, $hashref, $test_name, $extra ) = @_;
-    $test_name ||= '';
-
-    @_ >= MIN_ARGS() || @_ <= MAX_ARGS()
-        or return;
 
     # special hash construct
     # $self, $type, $hashref
     # OR
     # $self, $type, $hashref, $test_name
-    if ( ref $hashref eq 'HASH' &&
-       ! ref $test_name         &&
-         ref \$test_name eq 'SCALAR' ) {
-        # $hashref is hashref
-        # $test_name isn't a ref
-        # \$test_name is a SCALAR ref
-        my $all_passed = 1;
-        foreach my $domain ( keys %{$hashref} ) {
-            my $ips = $hashref->{$domain};
-            $self->is_record( $type, $domain, $ips, $test_name )
-                or $all_passed = 0;
-        }
+    return
+           @_ >= MIN_HASH_ARGS()
+        && @_ <= MAX_HASH_ARGS()
+        &&  ref $hashref eq 'HASH'
+        && !ref $test_name
+        &&  ref \$test_name eq 'SCALAR';
+}
 
-        return $all_passed;
+sub _handle_record { ## no critic (Subroutines::RequireArgUnpacking);
+    my $self = shift;
+
+    $self->_is_hash_format(@_)
+        and return $self->_handle_hash_format(@_);
+
+    return $self->is_record(@_);
+}
+
+sub _handle_hash_format {
+    my ( $self, $type, $hashref, $test_name, $extra ) = @_;
+
+    # $hashref is hashref
+    # $test_name isn't a ref
+    # \$test_name is a SCALAR ref
+    my $all_passed = 1;
+    foreach my $domain ( keys %{$hashref} ) {
+        my $ips = $hashref->{$domain};
+        $self->is_record( $type, $domain, $ips, $test_name )
+            or $all_passed = 0;
     }
 
-    return;
+    return $all_passed;
 }
 
 # A -> IP
 sub is_a {
-    my ( $self, $domain, $ips, $test_name ) = @_;
-
-    return $self->_handle_hash_format( 'A', $domain, $ips, $test_name )
-        || $self->is_record( 'A', $domain, $ips, $test_name );
+    my $self = shift;
+    return $self->_handle_record( 'A', @_ );
 }
 
 # PTR -> A
 sub is_ptr {
-    my ( $self, $ip, $domains, $test_name ) = @_;
-
-    return $self->_handle_hash_format( 'PTR', $ip, $domains, $test_name )
-        || $self->is_record( 'PTR', $ip, $domains, $test_name );
+    my $self = shift;
+    return $self->_handle_record( 'PTR', @_ );
 }
 
 # Domain -> NS
 sub is_ns {
-    my ( $self, $domain, $ns, $test_name ) = @_;
-
-    return $self->_handle_hash_format( 'NS', $domain, $ns, $test_name )
-        || $self->is_record( 'NS', $domain, $ns, $test_name );
+    my $self = shift;
+    return $self->_handle_record( 'NS', @_ );
 }
 
 # Domain -> MX
 sub is_mx {
-    my ( $self, $domain, $mx, $test_name ) = @_;
-
-    return $self->_handle_hash_format( 'MX', $domain, $mx, $test_name )
-        || $self->is_record( 'MX', $domain, $mx, $test_name );
+    my $self = shift;
+    return $self->_handle_record( 'MX', @_ );
 }
 
 # Domain -> CNAME
 sub is_cname {
-    my ( $self, $domain, $cname, $test_name ) = @_;
-
-    return $self->_handle_hash_format( 'CNAME', $domain, $cname, $test_name )
-        || $self->is_record( 'CNAME', $domain, $cname, $test_name );
+    my $self = shift;
+    return $self->_handle_record( 'CNAME', @_ );
 }
 
 # Domain -> TXT
 sub is_txt {
-    my ( $self, $domain, $txt, $test_name ) = @_;
-
-    return $self->_handle_hash_format( 'TXT', $domain, $txt, $test_name )
-        || $self->is_record( 'TXT', $domain, $txt, $test_name );
+    my $self = shift;
+    return $self->_handle_record( 'TXT', @_ );
 }
 
 sub _get_method {
