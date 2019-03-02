@@ -182,7 +182,9 @@ sub is_record {
     my $query_res = $res->query( $input, $type );
     my $results   = set();
 
-    ( ref $expected eq 'ARRAY' ) || ( $expected = [ $expected ] );
+    ref $expected eq 'ARRAY'
+        or $expected = [$expected];
+
     $test_name ||= "[$type] $input -> " . join ', ', @{$expected};
 
     if (!$query_res) {
