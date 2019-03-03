@@ -4,7 +4,7 @@ Test::DNS - Test DNS queries and zone configuration
 
 # VERSION
 
-version 0.200
+version 0.201
 
 # SYNOPSIS
 
@@ -250,8 +250,6 @@ case.
 [Net::DNS](https://metacpan.org/pod/Net::DNS)
 
 [Test::Deep](https://metacpan.org/pod/Test::Deep)
-
-[Set::Object](https://metacpan.org/pod/Set::Object)
 
 # AUTHOR
 
