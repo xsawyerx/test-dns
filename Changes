@@ -2,6 +2,8 @@ Revision history for Test-DNS
 
 {{$NEXT}}
 
+        - GH #2: Missed cpanfile. (Thanks, Slaven Rezić!)
+
 0.201     2019-03-03 15:03:41+02:00 Asia/Jerusalem
         - Removed Set::Object dependency. (Should fix tests.)
 
