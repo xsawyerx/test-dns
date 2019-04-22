@@ -4,7 +4,7 @@ Test::DNS - Test DNS queries and zone configuration
 
 # VERSION
 
-version 0.202
+version 0.203
 
 # SYNOPSIS
 
